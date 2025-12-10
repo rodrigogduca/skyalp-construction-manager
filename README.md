@@ -77,7 +77,7 @@ Este projeto foi entregue com código aberto para hospedagem própria.
 
 ## 👨‍💻 Desenvolvedor
 
-* **[SEU NOME]** - *Desenvolvedor Full Stack*
+* **RODRIGO GANDARELA SOARES DE FARIAS DUCA** - *Desenvolvedor Full Stack*
 * [LinkedIn](https://www.linkedin.com/in/rodrigo-gandarela-02473434b/) | [Email](rodrigogsfduca@gmail.com)
 
 ---
