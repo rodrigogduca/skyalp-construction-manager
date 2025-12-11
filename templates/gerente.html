@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Painel da Obra</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style> 
+    body { font-family: 'Plus Jakarta Sans', sans-serif; } 
+    .nav-item.active { @apply bg-white text-blue-700 shadow-sm border-l-4 border-blue-600; }
+    .tab-content { display: none; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .glass-card { @apply bg-white border border-slate-100 shadow-sm rounded-2xl; }
+</style>
+</head>
+<body class="bg-slate-50 h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-50 border-r border-slate-200 hidden md:flex flex-col z-20 shrink-0">
+        <div class="h-24 flex flex-col justify-center px-8 border-b border-slate-200/60">
+            <a href="/portal" class="text-xs font-bold text-slate-400 hover:text-blue-600 flex items-center gap-1 mb-2 transition">
+                <span class="material-symbols-rounded text-sm">arrow_back</span> Voltar ao Portal
+            </a>
+            <h1 class="font-bold text-slate-800 text-xl leading-tight truncate" title="{{ obra.nome }}">{{ obra.nome }}</h1>
+            <p class="text-xs text-slate-500 mt-1 flex items-center gap-1"><span class="material-symbols-rounded text-sm">location_on</span> {{ obra.localizacao }}</p>
+        </div>
+        <nav class="flex-1 py-8 px-4 space-y-2 overflow-y-auto">
+            <button onclick="mudarAba('dashboard')" id="btn-dashboard" class="nav-item w-full flex items-center px-4 py-3.5 text-slate-500 hover:bg-white hover:text-slate-900 rounded-xl transition group active"><span class="material-symbols-rounded mr-3 group-hover:text-blue-500">monitoring</span><span class="font-bold text-sm">Visão Geral</span></button>
+            <button onclick="mudarAba('diario')" id="btn-diario" class="nav-item w-full flex items-center px-4 py-3.5 text-slate-500 hover:bg-white hover:text-slate-900 rounded-xl transition group"><span class="material-symbols-rounded mr-3 group-hover:text-orange-500">import_contacts</span><span class="font-bold text-sm">Diário de Obra</span></button>
+            <button onclick="mudarAba('cronograma')" id="btn-cronograma" class="nav-item w-full flex items-center px-4 py-3.5 text-slate-500 hover:bg-white hover:text-slate-900 rounded-xl transition group"><span class="material-symbols-rounded mr-3 group-hover:text-blue-500">calendar_month</span><span class="font-bold text-sm">Cronograma</span></button>
+            <button onclick="mudarAba('equipe')" id="btn-equipe" class="nav-item w-full flex items-center px-4 py-3.5 text-slate-500 hover:bg-white hover:text-slate-900 rounded-xl transition group"><span class="material-symbols-rounded mr-3 group-hover:text-blue-500">engineering</span><span class="font-bold text-sm">Equipe de Campo</span></button>
+            <button onclick="mudarAba('ferramentas')" id="btn-ferramentas" class="nav-item w-full flex items-center px-4 py-3.5 text-slate-500 hover:bg-white hover:text-slate-900 rounded-xl transition group"><span class="material-symbols-rounded mr-3 group-hover:text-purple-500">download</span><span class="font-bold text-sm">Exportar Dados</span></button>
+        </nav>
+        <div class="p-6 border-t border-slate-200/60"><a href="/logout" class="flex items-center gap-2 text-sm text-red-500 hover:text-red-700 font-bold px-2 py-2 rounded-lg hover:bg-red-50 transition w-full justify-center"><span class="material-symbols-rounded">logout</span> Encerrar Sessão</a></div>
+    </aside>
+
+    <!-- MOBILE HEADER -->
+    <div class="md:hidden fixed top-0 w-full bg-white border-b border-slate-200 z-30 px-4 py-4 flex justify-between items-center shadow-sm"><span class="font-bold text-slate-800 text-base truncate max-w-[200px]">{{ obra.nome }}</span><button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="text-slate-600"><span class="material-symbols-rounded text-2xl">menu</span></button></div>
+    <div id="mobileMenu" class="hidden fixed inset-0 bg-slate-900/95 z-40 md:hidden flex flex-col p-8 space-y-6" onclick="this.classList.add('hidden')">
+        <div class="text-white/50 text-xs font-bold uppercase tracking-widest border-b border-white/10 pb-4 mb-4">Navegação</div>
+        <button onclick="mudarAba('dashboard')" class="text-white font-bold text-xl text-left flex items-center gap-3"><span class="material-symbols-rounded">monitoring</span> Visão Geral</button>
+        <button onclick="mudarAba('diario')" class="text-white font-bold text-xl text-left flex items-center gap-3"><span class="material-symbols-rounded">import_contacts</span> Diário de Obra</button>
+        <button onclick="mudarAba('cronograma')" class="text-white font-bold text-xl text-left flex items-center gap-3"><span class="material-symbols-rounded">calendar_month</span> Cronograma</button>
+        <button onclick="mudarAba('equipe')" class="text-white font-bold text-xl text-left flex items-center gap-3"><span class="material-symbols-rounded">groups</span> Equipe</button>
+        <button onclick="mudarAba('ferramentas')" class="text-white font-bold text-xl text-left flex items-center gap-3"><span class="material-symbols-rounded">download</span> Exportar</button>
+        <a href="/portal" class="text-blue-400 font-bold text-lg mt-auto pt-8 border-t border-white/10 flex items-center gap-2"><span class="material-symbols-rounded">arrow_back</span> Voltar ao Portal</a>
+    </div>
+
+    <!-- CONTEÚDO -->
+    <main class="flex-1 overflow-y-auto pt-20 md:pt-0 p-6 md:p-12 relative bg-slate-50/50">
+        
+        <!-- DASHBOARD -->
+        <div id="aba-dashboard" class="tab-content active max-w-7xl mx-auto">
+            <header class="mb-10 flex justify-between items-end"><div><h2 class="text-3xl font-bold text-slate-900 tracking-tight">Visão Geral</h2><p class="text-slate-500 mt-1">Acompanhamento em tempo real.</p></div><button onclick="carregarGraficos()" class="text-blue-600 hover:bg-blue-50 p-2.5 rounded-full transition bg-white shadow-sm border border-slate-200"><span class="material-symbols-rounded">refresh</span></button></header>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="glass-card p-6 flex flex-col justify-between h-32 relative overflow-hidden group hover:border-blue-200 transition"><div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition"><span class="material-symbols-rounded text-6xl text-blue-600">event_note</span></div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Etapas Totais</p><div class="flex items-baseline gap-2"><p class="text-4xl font-bold text-slate-800">{{ etapas|length }}</p><span class="text-sm font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Fases</span></div></div>
+                <div class="glass-card p-6 flex flex-col justify-between h-32 relative overflow-hidden group hover:border-orange-200 transition"><div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition"><span class="material-symbols-rounded text-6xl text-orange-600">engineering</span></div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Equipe Ativa</p><div class="flex items-baseline gap-2"><p class="text-4xl font-bold text-slate-800">{{ equipe_atual|length }}</p><span class="text-sm font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">Operários</span></div></div>
+                <div class="glass-card p-6 flex flex-col justify-between h-32 relative overflow-hidden group hover:border-green-200 transition"><div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition"><span class="material-symbols-rounded text-6xl text-green-600">trending_up</span></div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Status Atual</p><div class="flex items-baseline gap-2"><p class="text-xl font-bold text-slate-800 truncate">{{ obra.status }}</p></div></div>
+            </div>
+            <div class="glass-card p-8 min-h-[400px] flex items-center justify-center relative"><div id="chart-container" class="w-full flex justify-center"><p class="text-slate-400 animate-pulse flex items-center gap-2 font-medium"><span class="material-symbols-rounded animate-spin">sync</span> Sincronizando dados visuais...</p></div></div>
+        </div>
+
+        <!-- DIÁRIO DE OBRA (CHAT/TIMELINE) -->
+        <div id="aba-diario" class="tab-content max-w-5xl mx-auto">
+            <header class="mb-10"><div><h2 class="text-3xl font-bold text-slate-900">Diário de Obra</h2><p class="text-slate-500 mt-1">Histórico completo de registros da equipe.</p></div></header>
+
+            <div class="space-y-6 relative pl-8 border-l border-slate-200 ml-4">
+                {% for reg in registros %}
+                <div class="relative group">
+                    <!-- Marcador na linha do tempo -->
+                    <div class="absolute -left-[39px] top-1 w-5 h-5 bg-white border-4 border-orange-500 rounded-full"></div>
+                    
+                    <!-- Cartão do Registro -->
+                    <div class="glass-card p-6 transition hover:shadow-md">
+                        <div class="flex flex-col md:flex-row justify-between md:items-center mb-3 pb-3 border-b border-slate-50 gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-orange-50 text-orange-700 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">{{ reg.etapa_nome }}</span>
+                                <span class="text-xs text-slate-400 font-mono">{{ reg.data_hora }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500">{{ reg.autor_nome[0] }}</div>
+                                <span class="text-sm font-bold text-slate-700">{{ reg.autor_nome }}</span>
+                            </div>
+                        </div>
+
+                        <p class="text-slate-600 text-sm leading-relaxed mb-3 whitespace-pre-wrap">{{ reg.descricao }}</p>
+
+                        {% if reg.foto %}
+                        <div class="rounded-xl overflow-hidden border border-slate-100 max-w-md">
+                            <img src="{{ reg.foto }}" class="w-full h-auto object-cover max-h-80" alt="Registro fotográfico">
+                        </div>
+                        {% endif %}
+
+                        {% if reg.status_novo and reg.status_novo != 'Em Andamento' %}
+                        <div class="mt-4 flex items-center gap-2 text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg w-fit">
+                            <span class="material-symbols-rounded text-sm">info</span>
+                            Alterou status para: <span class="{{ 'text-green-600' if reg.status_novo == 'Concluída' else 'text-red-500' }}">{{ reg.status_novo }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-20 bg-white border border-dashed border-slate-200 rounded-2xl -ml-8">
+                    <span class="material-symbols-rounded text-5xl text-slate-200 mb-3">history_edu</span>
+                    <p class="text-slate-400 font-medium">Nenhum registro encontrado nesta obra.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- CRONOGRAMA -->
+        <div id="aba-cronograma" class="tab-content max-w-5xl mx-auto">
+            <header class="mb-10 flex justify-between items-center"><div><h2 class="text-3xl font-bold text-slate-900">Cronograma</h2><p class="text-slate-500 mt-1">Gestão de etapas.</p></div><button onclick="document.getElementById('modalEtapa').classList.remove('hidden')" class="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20 flex items-center gap-2 transition hover:-translate-y-0.5"><span class="material-symbols-rounded">add</span> Nova Etapa</button></header>
+            <div class="space-y-4">
+                {% for e in etapas %}
+                <div class="glass-card p-6 flex flex-col md:flex-row justify-between md:items-center gap-4 hover:shadow-md transition group relative overflow-hidden border-l-4 {{ 'border-l-red-500' if e.prioridade == 'Alta' else 'border-l-transparent' }}">
+                    <div class="flex items-center gap-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition"><span class="material-symbols-rounded text-2xl">{{ 'warning' if e.prioridade == 'Alta' else 'calendar_today' }}</span></div><div><h3 class="font-bold text-lg text-slate-800">{{ e.titulo }}</h3><p class="text-sm text-slate-500 font-medium">{{ e.data_inicio_prevista }} <span class="text-slate-300 mx-1">➜</span> {{ e.data_fim_prevista }}</p></div></div>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-1.5 {% if e.status == 'Concluída' %} bg-green-50 text-green-700 border-green-200 {% elif e.status == 'Em Andamento' %} bg-blue-50 text-blue-700 border-blue-200 {% else %} bg-slate-50 text-slate-500 border-slate-200 {% endif %}"><span class="w-1.5 h-1.5 rounded-full bg-current"></span> {{ e.status }}</span>
+                </div>
+                {% else %}
+                <div class="text-center py-20 border-2 border-dashed border-slate-200 rounded-2xl"><span class="material-symbols-rounded text-5xl text-slate-200 mb-3">calendar_view_week</span><p class="text-slate-400 font-medium">Nenhuma etapa definida.</p></div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- EQUIPE -->
+        <div id="aba-equipe" class="tab-content max-w-5xl mx-auto">
+            <header class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"><div><h2 class="text-3xl font-bold text-slate-900">Equipe de Campo</h2><p class="text-slate-500 mt-1">Operários com acesso ao diário.</p></div><div class="flex gap-3"><button onclick="document.getElementById('modalAtribuir').classList.remove('hidden')" class="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 flex items-center gap-2 transition"><span class="material-symbols-rounded">person_add_alt</span> Vincular</button></div></header>
+            <div class="glass-card overflow-hidden">
+                <div class="overflow-x-auto"><table class="w-full text-left text-sm whitespace-nowrap"><thead class="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase font-bold text-xs tracking-wider"><tr><th class="px-8 py-5">Colaborador</th><th class="px-8 py-5">Cargo</th><th class="px-8 py-5">Login</th><th class="px-8 py-5 text-right">Gerenciar</th></tr></thead><tbody class="divide-y divide-slate-50">{% for f in equipe_atual %}<tr class="hover:bg-blue-50/30 transition"><td class="px-8 py-5 font-bold text-slate-800 flex items-center gap-4"><div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold border border-slate-200">{{ f.nome[0] }}</div>{{ f.nome }}</td><td class="px-8 py-5 text-slate-600"><span class="bg-slate-100 px-3 py-1 rounded-full text-xs font-bold border border-slate-200">{{ f.funcao }}</span></td><td class="px-8 py-5 font-mono text-xs text-slate-500">{{ f.login }}</td><td class="px-8 py-5 text-right"><button onclick="removerDaEquipe('{{ f.id }}')" class="text-slate-400 hover:text-red-500 font-bold text-xs bg-transparent p-2 rounded-lg hover:bg-red-50 transition"><span class="material-symbols-rounded align-middle">person_remove</span></button></td></tr>{% else %}<tr><td colspan="4" class="p-12 text-center text-slate-400 italic">Nenhum colaborador vinculado a esta obra.</td></tr>{% endfor %}</tbody></table></div>
+            </div>
+        </div>
+
+        <!-- EXPORTAÇÃO -->
+        <div id="aba-ferramentas" class="tab-content max-w-4xl mx-auto">
+            <header class="mb-10"><h2 class="text-3xl font-bold text-slate-900">Exportação</h2><p class="text-slate-500 mt-1">Baixe relatórios.</p></header>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <a href="/exportar/csv" class="glass-card p-8 flex flex-col items-center text-center hover:border-green-400 hover:shadow-md transition group cursor-pointer"><div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-500 mb-4 group-hover:scale-110 transition"><span class="material-symbols-rounded text-3xl">table_view</span></div><h3 class="font-bold text-slate-800">Relatório Excel</h3><p class="text-xs text-slate-400 mt-1">Formato CSV</p></a>
+                <a href="/exportar/json" class="glass-card p-8 flex flex-col items-center text-center hover:border-yellow-400 hover:shadow-md transition group cursor-pointer"><div class="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-500 mb-4 group-hover:scale-110 transition"><span class="material-symbols-rounded text-3xl">code</span></div><h3 class="font-bold text-slate-800">Dados JSON</h3><p class="text-xs text-slate-400 mt-1">Backup API</p></a>
+                <a href="/exportar/sql" class="glass-card p-8 flex flex-col items-center text-center hover:border-blue-400 hover:shadow-md transition group cursor-pointer"><div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 mb-4 group-hover:scale-110 transition"><span class="material-symbols-rounded text-3xl">database</span></div><h3 class="font-bold text-slate-800">Backup SQL</h3><p class="text-xs text-slate-400 mt-1">Banco Completo</p></a>
+            </div>
+            <div class="border-t border-slate-200 pt-8"><button onclick="confirmarReset()" class="text-red-500 text-sm font-bold hover:underline flex items-center gap-2 px-4 py-2 hover:bg-red-50 rounded-lg transition w-fit"><span class="material-symbols-rounded">delete_forever</span> Apagar todos os dados desta obra</button></div>
+        </div>
+    </main>
+
+    <!-- Modais e Scripts mantidos iguais, apenas garantindo que o design esteja alinhado -->
+    <div id="modalAtribuir" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm transition-opacity"><div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-white/20 transform scale-100"><h3 class="text-lg font-bold mb-2 text-slate-800">Vincular Colaborador</h3><p class="text-sm text-slate-500 mb-6">Escolha um operário da lista global.</p><div class="max-h-64 overflow-y-auto space-y-2 mb-6 pr-2 custom-scrollbar">{% for func in todos_funcionarios %}{% if func not in equipe_atual %}<div class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl cursor-pointer border border-transparent hover:border-slate-200 transition group" onclick="atribuirFunc('{{ func.id }}')"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">{{ func.nome[0] }}</div><div><p class="font-bold text-sm text-slate-700">{{ func.nome }}</p><p class="text-xs text-slate-400">{{ func.funcao }}</p></div></div><span class="material-symbols-rounded text-slate-300 group-hover:text-blue-500">add_circle</span></div>{% endif %}{% else %}<p class="text-center text-xs text-slate-400 py-4">Todos os operários disponíveis já estão vinculados.</p>{% endfor %}</div><button onclick="document.getElementById('modalAtribuir').classList.add('hidden')" class="w-full py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition">Cancelar</button></div></div>
+    <div id="modalEtapa" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm transition-opacity"><div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl"><h3 class="text-lg font-bold mb-6 text-slate-800">Nova Etapa</h3><div class="space-y-4"><input id="eTitulo" placeholder="Nome da Etapa" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 transition font-medium"><div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-400 uppercase ml-1">Início</label><input type="date" id="eInicio" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-600 outline-none focus:border-blue-500"></div><div><label class="text-xs font-bold text-slate-400 uppercase ml-1">Fim</label><input type="date" id="eFim" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-600 outline-none focus:border-blue-500"></div></div><select id="ePrioridade" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 font-medium text-slate-600"><option value="Normal">Prioridade Normal</option><option value="Alta">Prioridade Alta</option></select></div><div class="flex gap-3 mt-8"><button onclick="this.closest('.fixed').classList.add('hidden')" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition">Cancelar</button><button onclick="salvarEtapa()" class="flex-1 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-black transition shadow-lg">Salvar</button></div></div></div>
+
+    <script>
+        function mudarAba(aba) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('aba-' + aba).classList.add('active');
+            document.getElementById('btn-' + aba).classList.add('active');
+            document.getElementById('mobileMenu').classList.add('hidden');
+        }
+        document.addEventListener("DOMContentLoaded", carregarGraficos);
+        async function carregarGraficos() {
+            const container = document.getElementById('chart-container');
+            if(!container) return;
+            try {
+                const res = await fetch('/api/dashboard_analytics');
+                const data = await res.json();
+                if(data.imagem) container.innerHTML = `<img src="${data.imagem}" class="max-w-full h-auto rounded-lg shadow-sm border border-slate-100">`;
+                else container.innerHTML = '<div class="text-center"><span class="material-symbols-rounded text-4xl text-slate-200 mb-2">bar_chart</span><p class="text-slate-400 text-sm">Sem dados suficientes.</p></div>';
+            } catch (e) { container.innerHTML = '<p class="text-red-400">Erro de conexão.</p>'; }
+        }
+        async function atribuirFunc(id) { await fetch('/api/atribuir_funcionario', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({funcionario_id: id}) }); window.location.reload(); }
+        async function removerDaEquipe(id) { if(confirm("Remover o acesso deste colaborador a esta obra?")) { await fetch('/api/remover_da_equipe', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({funcionario_id: id}) }); window.location.reload(); } }
+        async function salvarEtapa() { const dados = { titulo: document.getElementById('eTitulo').value, inicio: document.getElementById('eInicio').value, fim: document.getElementById('eFim').value, prioridade: document.getElementById('ePrioridade').value }; if(!dados.titulo) return alert("Título obrigatório"); await fetch('/api/add_etapa', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dados) }); window.location.reload(); }
+        async function confirmarReset() { if(confirm("ATENÇÃO: Isso apagará TODOS os dados desta obra. Continuar?")) { await fetch('/api/reset_sistema', {method: 'POST'}); window.location.href = '/'; } }
+    </script>
+</body>
+</html>

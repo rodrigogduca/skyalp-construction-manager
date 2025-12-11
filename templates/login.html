@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Acesso Sky ALP</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<style> 
+    body { font-family: 'Inter', sans-serif; } 
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+    .fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    .floating-input:focus ~ label, .floating-input:not(:placeholder-shown) ~ label { top: -0.5rem; left: 0.5rem; font-size: 0.75rem; color: #2563eb; background-color: white; padding: 0 0.25rem; }
+</style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-white">
+
+    <!-- Modal de Erro Centralizado -->
+    <div id="errorModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-[60] px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="flex flex-col items-center text-center">
+                <div class="mb-4 p-3 rounded-full bg-red-50 text-red-500 border border-red-100"><span class="material-symbols-rounded text-4xl">error</span></div>
+                <h3 class="text-lg font-bold text-gray-900 mb-1">Acesso Negado</h3>
+                <p id="errorMsg" class="text-sm text-gray-500 mb-5 leading-relaxed">Credenciais inválidas.</p>
+                <button onclick="closeError()" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 transition active:scale-95">Tentar Novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LADO ESQUERDO -->
+    <div class="hidden lg:flex w-1/2 relative bg-slate-900 items-center justify-center overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/90 to-slate-900/90"></div>
+        <div class="relative z-10 text-white max-w-lg p-12 fade-in-up">
+            <div class="mb-6 inline-flex p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10 shadow-xl">
+                <span class="material-symbols-rounded text-4xl text-blue-400">engineering</span>
+            </div>
+            <h1 class="text-5xl font-bold mb-6 leading-tight">Construindo o futuro com <span class="text-blue-400">precisão.</span></h1>
+            <p class="text-blue-100 text-lg leading-relaxed mb-8 font-light">Plataforma integrada de gestão de obras Sky ALP.</p>
+        </div>
+    </div>
+
+    <!-- LADO DIREITO -->
+    <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 md:p-12 relative overflow-y-auto">
+        <a href="/" class="absolute top-6 right-6 md:top-8 md:right-8 text-sm font-bold text-gray-400 hover:text-blue-600 transition flex items-center gap-1">Voltar ao site <span class="material-symbols-rounded text-lg">arrow_forward</span></a>
+
+        <div class="w-full max-w-md fade-in-up" style="animation-delay: 0.1s;">
+            <div class="lg:hidden mb-8 text-center">
+                <div class="inline-flex p-3 bg-blue-50 rounded-xl mb-4 text-blue-600"><span class="material-symbols-rounded text-4xl">engineering</span></div>
+                <h1 class="text-3xl font-bold text-gray-900">Sky ALP</h1>
+            </div>
+
+            <div class="text-left mb-10">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Bem-vindo</h2>
+                <p class="text-gray-500">Acesse o painel de gestão.</p>
+            </div>
+
+            <form onsubmit="fazerLogin(event)" class="space-y-6">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="material-symbols-rounded text-gray-400 group-focus-within:text-blue-500 transition">person</span></div>
+                    <input id="user" type="text" placeholder=" " class="floating-input w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm font-medium" required>
+                    <label for="user" class="absolute left-12 top-4 text-gray-400 pointer-events-none transition-all duration-200">Login</label>
+                </div>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="material-symbols-rounded text-gray-400 group-focus-within:text-blue-500 transition">lock</span></div>
+                    <input id="pass" type="password" placeholder=" " class="floating-input w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm font-medium" required>
+                    <label for="pass" class="absolute left-12 top-4 text-gray-400 pointer-events-none transition-all duration-200">Senha</label>
+                </div>
+                <button type="submit" id="btnEntrar" class="group relative w-full bg-slate-900 hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-slate-900/20 hover:shadow-blue-600/30 transition-all duration-300 transform active:scale-[0.98] flex items-center justify-center overflow-hidden">
+                    <span class="relative z-10 flex items-center gap-2">Acessar Sistema <span class="material-symbols-rounded text-lg group-hover:translate-x-1 transition-transform">login</span></span>
+                </button>
+            </form>
+        </div>
+        <div class="mt-auto pt-8 text-center w-full text-[10px] text-gray-300 font-medium">&copy; 2025 Sky ALP Engineering.</div>
+    </div>
+
+    <script>
+        async function fazerLogin(e) {
+            e.preventDefault(); 
+            const btn = document.getElementById('btnEntrar'); 
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="flex items-center gap-2 animate-pulse"><span class="material-symbols-rounded animate-spin text-lg">sync</span> Verificando...</span>'; 
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/login_global', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ user: document.getElementById('user').value, pass: document.getElementById('pass').value }) });
+                const data = await res.json();
+                if (data.status === 'sucesso') {
+                    btn.classList.replace('bg-slate-900', 'bg-green-500');
+                    btn.innerHTML = '<span class="flex items-center gap-2"><span class="material-symbols-rounded text-lg">check_circle</span> Sucesso!</span>';
+                    setTimeout(() => { window.location.href = data.tipo === 'admin' ? '/portal' : '/operador'; }, 500);
+                } else { showError(data.msg); btn.innerHTML = orig; btn.disabled = false; }
+            } catch (err) { showError('Erro de conexão.'); btn.innerHTML = orig; btn.disabled = false; }
+        }
+        function showError(msg) { 
+            document.getElementById('errorMsg').innerText = msg; 
+            const m = document.getElementById('errorModal'); 
+            m.classList.remove('hidden'); 
+            setTimeout(() => { m.classList.remove('opacity-0'); document.getElementById('modalContent').classList.add('scale-100'); }, 10); 
+        }
+        function closeError() { 
+            const m = document.getElementById('errorModal'); 
+            m.classList.add('opacity-0'); 
+            document.getElementById('modalContent').classList.remove('scale-100'); 
+            setTimeout(() => { m.classList.add('hidden'); }, 300); 
+        }
+    </script>
+</body>
+</html>
