@@ -1,148 +1,169 @@
-Aqui está o arquivo `README.md` completo, formatado para o GitHub. O conteúdo mantém o tom estritamente profissional, sem emojis e com o guia técnico detalhado para infraestrutura própria (VPS Linux), conforme solicitado.
+# ESPECIFICAÇÃO TÉCNICA DETALHADA — SISTEMA SKY ALP
 
------
-
-````markdown
-# SkyALP - Sistema Integrado de Gestão de Obras Civis
-
-![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
-![Flask Version](https://img.shields.io/badge/flask-2.0%2B-green)
-![Status](https://img.shields.io/badge/status-stable%20v1.0.0-success)
-
-## Visão Geral
-
-O **SkyALP** é uma solução de software Full Stack desenvolvida para a administração centralizada de projetos de engenharia civil. [cite_start]O sistema soluciona o problema de desintegração de dados entre o escritório e o canteiro de obras, operando em uma arquitetura cliente-servidor robusta[cite: 7, 8].
-
-O projeto está dividido em dois módulos funcionais distintos:
-1.  [cite_start]**Portal Administrativo (Desktop):** Interface de gestão para engenheiros e diretores[cite: 9].
-2.  [cite_start]**Módulo Operacional (Mobile):** Aplicação web otimizada para dispositivos móveis, destinada ao registro de diário de obra por mestres e encarregados[cite: 10].
+**Versão:** 1.0.0  
+**Data:** 10 de Dezembro de 2025  
+**Classificação:** Documentação Técnica Oficial  
 
 ---
 
-## Funcionalidades
+## SUMÁRIO
 
-### Módulo Administrativo (Web Desktop)
-* [cite_start]**Gestão de Leads:** Centralização de solicitações de orçamento via Landing Page integrada[cite: 42, 43].
-* [cite_start]**Gestão de Contratos:** Cadastro de múltiplos clientes e obras [cite: 46-49].
-* [cite_start]**Cronograma de Engenharia:** Definição de etapas construtivas (Gantt simplificado) e prioridades[cite: 59, 60].
-* [cite_start]**Controle de Equipe:** Gestão de usuários e níveis de acesso (Gestor vs. Operador) [cite: 52-55].
-* [cite_start]**Monitoramento:** Painel com indicadores de progresso visual (Matplotlib) e linha do tempo de registros[cite: 66, 67].
-* [cite_start]**Exportação de Dados:** Relatórios em CSV, JSON e Dump SQL[cite: 68].
-
-### Módulo Operacional (Web Mobile)
-* **Interface Responsiva:** Design Mobile-First utilizando Tailwind CSS.
-* [cite_start]**Diário de Obra Digital:** Registro de atividades com suporte a upload de imagens (armazenamento em Base64)[cite: 10, 77, 78].
-* [cite_start]**Status em Tempo Real:** Atualização de etapas (Em Andamento, Bloqueada, Concluída)[cite: 80].
-* **Funcionamento em Campo:** Otimizado para redes móveis (4G/5G).
-
----
-
-## Stack Tecnológico
-
-* [cite_start]**Linguagem:** Python 3.8+[cite: 14].
-* [cite_start]**Framework Web:** Flask[cite: 7, 17].
-* [cite_start]**Banco de Dados:** SQLite (SQLAlchemy ORM)[cite: 15, 17].
-* **Frontend:** HTML5, Jinja2, Tailwind CSS (CDN).
-* [cite_start]**Visualização de Dados:** Matplotlib[cite: 17].
+1. [Dados de Autoria e Desenvolvimento](#1-dados-de-autoria-e-desenvolvimento)
+2. [Visão Geral do Sistema](#2-visão-geral-do-sistema)
+3. [Arquitetura de Software](#3-arquitetura-de-software)
+4. [Tecnologias Utilizadas](#4-tecnologias-utilizadas)
+5. [Modelagem de Dados (Dicionário Detalhado)](#5-modelagem-de-dados-dicionário-detalhado)
+6. [APIs e Endpoints (Especificação Formal)](#6-api-e-endpoints-especificação-formal)
+7. [Lógica Funcional Detalhada](#7-lógica-funcional-detalhada)
+8. [Regras de Negócio (Modelo Formal)](#8-regras-de-negócio-formalização)
+9. [Segurança e Compliance](#9-segurança-e-compliance)
+10. [Infraestrutura e DevOps](#10-infraestrutura-e-devops)
+11. [Requisitos de Sistema e Limites](#11-requisitos-de-sistema-e-limites)
+12. [Manual Operacional (Visão por Perfil)](#12-manual-operacional-visão-por-perfil)
+13. [Módulos de Exportação e Backup](#13-módulos-de-exportação-e-backup)
+14. [Considerações Finais](#14-considerações-finais)
 
 ---
 
-## Guia de Infraestrutura e Implantação (Produção)
+## 1. DADOS DE AUTORIA E DESENVOLVIMENTO
 
-Este sistema foi projetado para ser hospedado em infraestrutura própria ou VPS (Virtual Private Server) rodando Linux (Ubuntu 20.04 ou superior). [cite_start]A configuração recomendada utiliza **Nginx** como proxy reverso e **Gunicorn** como servidor de aplicação WSGI[cite: 27, 32].
+* **Responsável Técnico:** Rodrigo Gandarela Soares de Farias Duca
+* **Formação:** Desenvolvedor Full Stack / Engenheiro da Computação
+* **Versão da Build:** 1.0.0
+* **Contato:** `rodrigosfduca@gmail.com`
+* **LinkedIn:** `/rodrigo-gandarela-02473434b`
+* **Github:** `/RodrigoDuca`
 
-### 1. Preparação do Ambiente
-No servidor Linux, instale as dependências do sistema:
+**Responsável pelo ciclo de vida completo:**
+* Planejamento
+* Desenvolvimento backend e frontend
+* Arquitetura de dados
+* Deploy
+* Segurança
+* Testes funcionais
 
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install python3-pip python3-venv nginx -y
-````
+---
 
-### 2\. Instalação da Aplicação
+## 2. VISÃO GERAL DO SISTEMA
 
-Clone o repositório e configure o ambiente virtual:
+O **Sky ALP** é uma plataforma inteligente para gestão de obras, integrando:
 
-```bash
-cd /var/www/skyalp
-python3 -m venv venv
-source venv/bin/activate
-pip install flask flask_sqlalchemy matplotlib gunicorn
-```
+* ✔ Diário de Obra
+* ✔ Gestão de Etapas
+* ✔ Dashboard Analítico
+* ✔ Módulos administrativos
+* ✔ Exportação de dados
+* ✔ Coleta de leads e comunicação
 
-### 3\. Configuração do Serviço (Systemd)
+> **Nota:** O sistema segue uma filosofia de confiabilidade, rastreabilidade, segurança e mobilidade, garantindo operação a campo, mesmo com operadores de baixa familiaridade tecnológica.
 
-Para garantir a disponibilidade contínua, configure o serviço no Systemd. Crie o arquivo `/etc/systemd/system/skyalp.service`:
+---
 
-```ini
-[Unit]
-Description=Gunicorn instance to serve SkyALP
-After=network.target
+## 3. ARQUITETURA DE SOFTWARE
 
-[Service]
-User=www-data
-Group=www-data
-WorkingDirectory=/var/www/skyalp
-Environment="PATH=/var/www/skyalp/venv/bin"
-# Timeout definido para 120s para permitir uploads de imagens grandes em conexões lentas
-ExecStart=/var/www/skyalp/venv/bin/gunicorn --workers 3 --bind unix:skyalp.sock --timeout 120 app:app
+### 3.1 Arquitetura Geral
+O sistema utiliza uma **Arquitetura Monolítica Modular**, composta por:
+1.  **Camada de Apresentação:** Jinja2 + Tailwind
+2.  **Camada de Lógica de Negócio:** Flask Controllers
+3.  **Camada de Serviços:** Analytics, Autenticação, Exportação
+4.  **Camada de Persistência:** SQLAlchemy ORM
 
-[Install]
-WantedBy=multi-user.target
-```
+**Vantagens:**
+* Manutenção centralizada
+* Menor latência
+* Deploy mais simples
+* Menos pontos de falha
 
-### 4\. Configuração do Proxy Reverso (Nginx)
+### 3.2 Componentes Internos
+* `/controllers/` → Endpoints e rotas
+* `/services/` → Módulos independentes (analytics, exportação, segurança)
+* `/models/` → Classes ORM
+* `/static/` → Tailwind, ícones
+* `/templates/` → Interfaces Jinja2
+* `/utils/` → Funções auxiliares (data/hora, validações)
 
-A configuração do Nginx é crítica para permitir o upload de evidências fotográficas. No arquivo `/etc/nginx/sites-available/skyalp`:
+### 3.3 Padrões de Projeto Aplicados
+* **Factory Pattern:** Criação da instância da aplicação Flask.
+* **MVC Parcial:** Usado de forma pragmática.
+* **Repository Pattern:** Implementado via SQLAlchemy.
+* **Adapter Pattern:** Abstração para exportações.
+* **Service Layer:** Lógica encapsulada fora dos controladores.
 
-```nginx
-server {
-    listen 80;
-    server_name seu-dominio.com.br;
+### 3.4 Fluxo de Dados (Resumo Formal)
+1.  Usuário realiza requisição (HTTP).
+2.  Camada de Roteamento direciona ao Controller.
+3.  Controller aciona a Camada de Serviços.
+4.  Serviços acessam o ORM.
+5.  ORM traduz para SQL e consulta o Banco.
+6.  Resposta é processada e devolvida ao template Jinja2.
+7.  HTML final é entregue ao cliente.
 
-    # OBRIGATÓRIO: Ajuste para aceitar payloads de até 32MB
-    client_max_body_size 32M;
+---
 
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/var/www/skyalp/skyalp.sock;
-    }
-}
-```
+## 4. TECNOLOGIAS UTILIZADAS
 
-### 5\. Requisitos de Segurança
+### 4.1 Backend
+* **Linguagem:** Python 3.10+
+* **Framework:** Flask
+* **Gestão de Sessão:** Flask-Session
+* **ORM:** SQLAlchemy
+* **Analytics:** Matplotlib (modo Agg backend)
 
-  * [cite_start]**SSL/HTTPS:** É mandatório o uso de certificado SSL (ex: Let's Encrypt) para que os navegadores móveis permitam o acesso à câmera no módulo operacional[cite: 30, 31].
-  * [cite_start]**Variáveis de Ambiente:** Configure a `SECRET_KEY` via arquivo `.env` no servidor de produção[cite: 34, 35].
-  * [cite_start]**Backup:** Configure rotinas diárias de backup do arquivo `skyalp_production.db`[cite: 37, 38].
+### 4.2 Frontend
+* **Template Engine:** Jinja2
+* **Estilização:** Tailwind CSS CDN
+* **Ícones:** Google Material Symbols
 
------
+### 4.3 Terceiros e Bibliotecas Conectadas
+* Interpretador Base64 para gráficos
+* Mecanismo de horário sincronizado (UTC-3)
 
-## Acesso Inicial
+---
 
-[cite_start]Ao realizar a primeira execução, o sistema cria automaticamente um superusuário para configuração inicial[cite: 20].
+## 5. MODELAGEM DE DADOS (DICIONÁRIO DETALHADO)
 
-**Credenciais Padrão:**
+Abaixo está o modelo de dados, com explicações aprofundadas das entidades principais.
 
-  * [cite_start]**Login:** `admin` [cite: 21]
-  * [cite_start]**Senha:** `admin` [cite: 22]
+### 5.1 Entidade: Obra
+*Unidade central do sistema.*
 
-> **Nota:** Recomenda-se a alteração imediata destas credenciais após o primeiro login.
+| Campo | Tipo | Descrição |
+| :--- | :--- | :--- |
+| `id` | PK | Identificador único |
+| `nome` | Texto | Nome da obra |
+| `status` | Texto | “Em andamento”, “Pendente”, “Concluída” |
+| `cor_primaria` | Hex | Cor identificadora |
+| `equipe` | Rel. M:N | Funcionários associados |
 
------
+**Funções críticas:** Define permissões, impacta dashboard, identidade visual e controla o ciclo de vida.
 
-## Autor
+### 5.2 Entidade: Registro Diário
+*Contém fatos operacionais.*
 
-**Rodrigo Gandarela Soares de Farias Duca**
-[cite_start]*Desenvolvedor Full Stack / Engenheiro da Computação* [cite: 5]
+**Campos importantes:**
+* `data_hora`: Usado para exibição visual.
+* `data_iso`: Usado para ordenação lógica.
+* `autor_nome`: Nome do responsável.
+* `foto`: Arquivo ou string Base64.
+* `status_novo`: Flag de estado.
 
-  * [cite_start]**Email:** rodrigogsfduca@gmail.com [cite: 5]
-  * [cite_start]**LinkedIn:** [Perfil Profissional](https://www.linkedin.com/in/rodrigo-gandarela-02473434b/) [cite: 5]
-  * [cite_start]**GitHub:** [@RodrigoDuca](https://github.com/RodrigoDuca) [cite: 5]
+*Inclui rastreabilidade histórica completa.*
 
------
+### 5.3 Entidade: Etapa
+*Controla cronogramas.*
 
-© 2025 SkyALP. Todos os direitos reservados.
+**Campos:**
+* `prioridade` (Afeta layout e dashboards)
+* `data_inicio_prevista`
+* `data_fim_prevista`
+* `status`
 
-```
-```
+### 5.4 Entidades Complementares
+* Funcionário
+* Solicitação (Leads)
+* Usuário Interno
+
+### 5.5 Esquema ER (Descrito)
+* **Obra** 1 — N **Etapas**
+* **Obra** 1 — N **Registros**
+* **Funcionário** M — N **Ob
